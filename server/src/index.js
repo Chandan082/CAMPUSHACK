@@ -49,7 +49,7 @@ app.use(errorHandler);
 
 async function start() {
   try {
-    await connectDB();
+    // await connectDB();
     app.listen(PORT, () => {
       console.log(`Server listening on port ${PORT}`);
     });
