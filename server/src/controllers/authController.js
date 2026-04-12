@@ -157,6 +157,58 @@ export async function login(req, res, next) {
   }
 }
 
+export async function requestLoginOtp(req, res, next) {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    await issueOtpForEmail(user.email);
+    res.json({ message: 'A login OTP has been sent to your email.' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function loginWithOtp(req, res, next) {
+  try {
+    const { email, code } = req.body;
+    if (!email || !code) return res.status(400).json({ message: 'Email and OTP are required' });
+
+    const record = await OTP.findOne({ email: email.toLowerCase(), code: String(code).trim() });
+    if (!record || record.expiresAt < new Date()) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (!user.isVerified) {
+      user.isVerified = true;
+      await user.save();
+    }
+
+    await OTP.deleteMany({ email: email.toLowerCase() });
+
+    const token = signToken({ sub: user._id.toString(), role: user.role });
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
+      },
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export async function me(req, res) {
   res.json({
     user: {
