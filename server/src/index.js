@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 5000;
 
 // Update CORS to allow your Vercel URL
 app.use(cors({ 
-  origin: process.env.CLIENT_URL || true, // Ensure your Vercel URL is in Render Env Vars as CLIENT_URL
+  origin: "https://campushack.vercel.app", // Your actual Vercel site URL
   credentials: true 
 }));
 
