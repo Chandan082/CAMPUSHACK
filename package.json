@@ -1,0 +1,10 @@
+{
+  "name": "smart-student-solution",
+  "private": true,
+  "description": "Smart Student Solution — MERN hackathon monorepo (client + server)",
+  "scripts": {
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "install:all": "npm install --prefix server && npm install --prefix client"
+  }
+}
