@@ -1,4 +1,7 @@
+import dns from 'node:dns';
 import mongoose from 'mongoose';
+
+dns.setDefaultResultOrder('ipv4first');
 
 export async function connectDB() {
   const uri = process.env.MONGODB_URI;
@@ -6,8 +9,6 @@ export async function connectDB() {
     throw new Error('MONGODB_URI is not set');
   }
   mongoose.set('strictQuery', true);
-  await mongoose.connect(uri);
-
   const opts = {
     serverSelectionTimeoutMS: 15_000,
   };
