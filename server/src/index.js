@@ -16,10 +16,13 @@ const PORT = process.env.PORT || 5000;
 
 // Update CORS to allow your Vercel URL
 app.use(cors({ 
-  origin: [
-    "https://campushack-git-main-chandan-kumars-projects-c386896f.vercel.app",
-    "https://campushack.vercel.app" // Add your main Vercel domain too
-  ],
+  origin: function (origin, callback) {
+    if (!origin || origin.includes('vercel.app') || origin.includes('localhost')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true 
 }));
 
@@ -43,7 +46,7 @@ app.use(errorHandler);
 
 async function start() {
   try {
-    // await connectDB(); // Keep commented if not using DB yet
+    await connectDB();
     app.listen(PORT, () => {
       console.log(`Server listening on port ${PORT}`);
     });
